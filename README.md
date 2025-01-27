@@ -25,4 +25,4 @@ Ce script bash est conçu pour simplifier l'installation des pilotes graphiques 
 
 1. **Cloner le dépôt** :
    ```bash
-   git clone [URL de votre repo]
+   git clone [https://github.com/J-francois-Martin/Installation-Automatisee-Pilotes-Graphiques-Linux.git]
