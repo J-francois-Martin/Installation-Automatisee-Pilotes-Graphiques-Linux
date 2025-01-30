@@ -6,6 +6,18 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+# Vérifier si zenity est installé, sinon l'installer
+if ! command -v zenity &> /dev/null; then
+  echo "Zenity n'est pas installé. Installation en cours..."
+  apt update
+  apt install -y zenity
+  if [ $? -ne 0 ]; then
+    echo "Échec de l'installation de Zenity. Veuillez l'installer manuellement."
+    exit 1
+  fi
+  echo "Zenity installé avec succès."
+fi
+
 # Vérifier si l'utilisateur est dans le groupe sudoers
 if ! groups $SUDO_USER | grep -qw "sudo"; then
   if zenity --question --text="L'utilisateur $SUDO_USER n'est pas dans le groupe sudoers. Voulez-vous ajouter l'utilisateur au groupe sudoers ?"; then
@@ -20,18 +32,6 @@ if ! groups $SUDO_USER | grep -qw "sudo"; then
     zenity --info --text="L'utilisateur doit être dans le groupe sudoers pour exécuter ce script."
     exit 1
   fi
-fi
-
-# Vérifier si zenity est installé, sinon l'installer
-if ! command -v zenity &> /dev/null; then
-  echo "Zenity n'est pas installé. Installation en cours..."
-  apt update
-  apt install -y zenity
-  if [ $? -ne 0 ]; then
-    echo "Échec de l'installation de Zenity. Veuillez l'installer manuellement."
-    exit 1
-  fi
-  echo "Zenity installé avec succès."
 fi
 
 # Déterminer l'architecture du système
