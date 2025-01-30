@@ -2,11 +2,9 @@
 
 # Vérifier si l'utilisateur est root
 if [ "$(id -u)" -ne 0 ]; then
-  echo "Ce script doit être exécuté en tant que root."
-  echo "Veuillez entrer le mot de passe root pour continuer."
-  exec sudo bash "$0" "$@"
+  zenity --password --title="Authentification Root" --text="Veuillez entrer le mot de passe root pour exécuter ce script:" | sudo -S -- bash "$0"
   if [ $? -ne 0 ]; then
-    echo "Échec de l'authentification. Ce script doit être exécuté en tant que root."
+    zenity --error --text="Échec de l'authentification. Ce script doit être exécuté en tant que root."
     exit 1
   fi
   exit 0
