@@ -3,6 +3,9 @@ Script bash pour installer automatiquement les pilotes graphiques Nvidia et AMD 
 # Installation Automatisée de Pilotes Graphiques
 
 Ce script bash est conçu pour simplifier l'installation des pilotes graphiques Nvidia et AMD sur des systèmes Linux basés sur Debian/Ubuntu.
+Voici un exemple complet des commandes que vous pourriez utiliser :
+- chmod +x install_drivers.sh  # Rendre le script exécutable
+- ./install_drivers.sh         # Exécuter le script
 
 ## Prérequis
 
