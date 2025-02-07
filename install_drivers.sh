@@ -2,11 +2,11 @@
 
 # Vérifier si l'utilisateur est root
 if [ "$(id -u)" -ne 0 ]; then
-  echo "Ce script doit être exécuté en tant que root."
-  echo "Veuillez entrer le mot de passe root pour continuer."
+  echo "Ce script doit être exécuté en tant que sudo."
+  echo "Veuillez entrer le mot de passe sudo pour continuer."
   exec sudo bash "$0" "$@"
   if [ $? -ne 0 ]; then
-    echo "Échec de l'authentification. Ce script doit être exécuté en tant que root."
+    echo "Échec de l'authentification. Ce script doit être exécuté en tant que sudo."
     exit 1
   fi
   exit 0
@@ -22,22 +22,6 @@ if ! command -v zenity &> /dev/null; then
     exit 1
   fi
   echo "Zenity installé avec succès."
-fi
-
-# Vérifier si l'utilisateur est dans le groupe sudoers
-if ! groups $SUDO_USER | grep -qw "sudo"; then
-  if zenity --question --text="L'utilisateur $SUDO_USER n'est pas dans le groupe sudoers. Voulez-vous ajouter l'utilisateur au groupe sudoers ?"; then
-    usermod -aG sudo $SUDO_USER
-    if [ $? -eq 0 ]; then
-      zenity --info --text="L'utilisateur $SUDO_USER a été ajouté au groupe sudoers. Veuillez redémarrer le terminal et exécuter à nouveau le script."
-    else
-      zenity --error --text="Échec de l'ajout de l'utilisateur $SUDO_USER au groupe sudoers."
-    fi
-    exit 0
-  else
-    zenity --info --text="L'utilisateur doit être dans le groupe sudoers pour exécuter ce script."
-    exit 1
-  fi
 fi
 
 # Déterminer l'architecture du système
