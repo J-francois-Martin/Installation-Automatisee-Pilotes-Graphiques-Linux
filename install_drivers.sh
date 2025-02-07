@@ -92,7 +92,7 @@ install_nvidia() {
 
   # Installer ou réinstaller les pré-requis et les paquets Nvidia et CUDA
   echo "Installation ou réinstallation des pré-requis et des pilotes Nvidia et CUDA..."
-  apt install -y linux-headers-amd64 nvidia-driver nvidia-settings nvidia-cuda-toolkit nvidia-cuda-dev vulkan-tools vulkan-tools:i386 nvidia-driver-libs:i386 --reinstall
+  apt install -y linux-headers-amd64 nvidia-driver nvidia-settings nvidia-cuda-toolkit nvidia-cuda-dev vulkan-tools --reinstall
 }
 
 # Fonction pour installer ou réinstaller les pilotes AMD
