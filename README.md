@@ -11,7 +11,7 @@ Voici un exemple complet des commandes que vous pourriez utiliser :
 - * Après avoir ajouté un utilisateur au groupe sudo, l'utilisateur devra soit se déconnecter et se reconnecter,
   * soit redémarrer son shell pour que les changements prennent effet.
 - ```bash
-  su- usermod -aG sudo nom_utilisateur
+  su -c "usermod -aG sudo $USER"
 - * Exécuter le script 
 - ```bash
   sudo ./install_drivers.sh  
