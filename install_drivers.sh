@@ -1,6 +1,13 @@
 #!/bin/bash
 
-# Vérifier si l'utilisateur est root
+# Fonction pour lister les versions disponibles des pilotes Nvidia
+list_nvidia_versions() {
+  apt update
+  nvidia_versions=$(apt-cache madison nvidia-driver | awk '{print $3}')
+  echo "$nvidia_versions"
+}
+
+# Vérifier si l'utilisateur est sudo
 if [ "$(id -u)" -ne 0 ]; then
   echo "Ce script doit être exécuté en tant que sudo."
   echo "Veuillez entrer le mot de passe sudo pour continuer."
@@ -59,7 +66,7 @@ fi
 
 zenity --info --text="$installed_versions_message"
 
-# Fenêtre de sélection du type de pilote
+# Fenêtre de sélection du type de pilote et de la version
 DRIVER_TYPE=$(zenity --list --title="Sélection du type de pilote" --radiolist \
   --column="Sélection" --column="Type de pilote" \
   TRUE "Nvidia" FALSE "AMD" FALSE "Quitter")
@@ -74,8 +81,29 @@ if [ -z "$DRIVER_TYPE" ]; then
   exit 1
 fi
 
+if [ "$DRIVER_TYPE" == "Nvidia" ]; then
+  available_nvidia_versions=$(list_nvidia_versions)
+  DRIVER_VERSION=$(zenity --list --title="Sélection de la version du pilote Nvidia" --radiolist \
+    --column="Sélection" --column="Version du pilote" \
+    $(echo "$available_nvidia_versions" | awk '{print "FALSE", $1}'))
+elif [ "$DRIVER_TYPE" == "AMD" ]; then
+  DRIVER_VERSION=$(zenity --list --title="Sélection de la version du pilote AMD" --radiolist \
+    --column="Sélection" --column="Version du pilote" \
+    TRUE "Dernière version" FALSE "Quitter")
+fi
+
+if [ "$DRIVER_VERSION" == "Quitter" ]; then
+  zenity --info --text="Vous avez choisi de quitter. Au revoir!"
+  exit 0
+fi
+
+if [ -z "$DRIVER_VERSION" ]; then
+  zenity --error --text="Aucune version de pilote sélectionnée"
+  exit 1
+fi
+
 # Demander une confirmation avant de procéder à l'installation
-if ! zenity --question --text="Attention, vous allez procéder à l'installation du pilote $DRIVER_TYPE. Voulez-vous continuer ?"; then
+if ! zenity --question --text="Attention, vous allez procéder à l'installation du pilote $DRIVER_TYPE version $DRIVER_VERSION. Voulez-vous continuer ?"; then
   zenity --info --text="Installation annulée."
   exit 0
 fi
@@ -92,7 +120,7 @@ install_nvidia() {
 
   # Installer ou réinstaller les pré-requis et les paquets Nvidia et CUDA
   echo "Installation ou réinstallation des pré-requis et des pilotes Nvidia et CUDA..."
-  apt install -y linux-headers-amd64 nvidia-driver nvidia-settings nvidia-cuda-toolkit nvidia-cuda-dev vulkan-tools --reinstall
+  apt install -y linux-headers-amd64 "nvidia-driver=$DRIVER_VERSION" nvidia-settings nvidia-cuda-toolkit nvidia-cuda-dev vulkan-tools --reinstall
 }
 
 # Fonction pour installer ou réinstaller les pilotes AMD
@@ -112,7 +140,7 @@ install_amd() {
 
 # Installation ou réinstallation des pilotes en fonction du type sélectionné
 if [ "$DRIVER_TYPE" == "Nvidia" ]; then
-  zenity --info --text="Installation du pilote Nvidia avec CUDA..."
+  zenity --info --text="Installation du pilote Nvidia version $DRIVER_VERSION avec CUDA..."
   install_nvidia
 elif [ "$DRIVER_TYPE" == "AMD" ]; then
   zenity --info --text="Installation du pilote AMD..."
