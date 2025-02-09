@@ -1,4 +1,4 @@
-# Installation-Automatisee-Pilotes-Graphiques-Linux
+# Pilotes Graphiques Linux Debian
 Script bash pour installer automatiquement les pilotes graphiques Nvidia et AMD sur Linux Debian/Ubuntu.interface graphique via Zenity pour une installation sécurisée et conviviale.
 # Installation Automatisée de Pilotes Graphiques
 
